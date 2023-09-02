@@ -49,7 +49,7 @@ const closeDialog = () => {
 };
 
 const save = () => {
-  const payload: TodoItem = {
+  const payload: any = {
     title: title.value,
     body: body.value,
     color: color.value,

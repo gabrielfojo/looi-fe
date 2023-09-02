@@ -23,7 +23,7 @@
             :style="{ backgroundColor: card.color ?? '#FFF' }"
             :title="card.title"
             variant="text"
-            v-for="card in toDoList"
+            v-for="card in store.bucket"
             :key="card.id"
           >
             <v-card-text>
@@ -54,31 +54,27 @@
   </v-card>
 </template>
 <script lang="ts" setup>
-import { data } from "@/assets/data.js";
 import { ref } from "vue";
 
 import Dialog from "@/components/Dialog.vue";
 import Drawer from "@/components/Drawer.vue";
 import { TodoItem } from "./types";
+import { useAppStore } from "@/store/app";
 
-const toDoList = ref(data);
 const drawer = ref(false);
+const store = useAppStore();
 
 // Methods
 
 const addTodo = (payload: TodoItem) => {
-  payload["id"] = Math.random().toString(36);
-  toDoList.value.push(payload);
+  store.addTodo(payload);
 };
 
-const deleteTodo = (id: string) => {
-  toDoList.value = toDoList.value.filter((el: TodoItem) => id !== el.id);
+const deleteTodo = (id: number) => {
+  store.deleteTodo(id);
 };
 
 const updateTodo = (payload: TodoItem) => {
-  const key = toDoList.value.findIndex(
-    (todo: TodoItem) => todo.id === payload.id
-  );
-  toDoList.value[key] = payload;
+  store.updateTodo(payload);
 };
 </script>

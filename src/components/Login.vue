@@ -33,6 +33,7 @@
 <script lang="ts" setup>
 import { ref, computed, onBeforeMount } from "vue";
 import { useAppStore } from "@/store/app";
+import { TodoItem } from "./types";
 
 const emit = defineEmits(["isLogged"]);
 
@@ -46,9 +47,7 @@ const isValid = computed(() => {
 });
 
 const login = async () => {
-  // POST LOGIN
-
-  fetch(import.meta.env.VITE_API_URL, {
+  await fetch(`${import.meta.env.VITE_API_URL}/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -58,39 +57,52 @@ const login = async () => {
   })
     .then((res) => res.json())
     .then((res) => {
-      if (res.data) {
-        store.token = res.data;
+      if (res.token && !store.isLogged) {
+        store.token = res.token;
         store.isLogged = true;
         store.loginError = false;
-        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("token", res.token);
+        hydrateBucket();
       } else {
         store.loginError = true;
       }
     });
 };
 
+const hydrateBucket = async () => {
+  await fetch(`${import.meta.env.VITE_API_URL}/todo`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${store.token}`,
+    },
+  })
+    .then((res) => {
+      return res.json();
+    })
+    .then((res: [TodoItem]) => {
+      if (res.length) {
+        store.bucket.push(...res);
+      }
+    });
+};
 /*
  *  If there is a token in Localstorage we try to retrieve the data and skip the login
  */
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
   const token = localStorage.getItem("token");
   if (!token) {
     return;
   }
-  fetch(import.meta.env.VITE_API_DATA_URL, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((res) => res.json())
-    .then((res) => {
-      //== @TODO check Health
-      if (res && res.hm3_plans) {
-        store.isLogged = true;
-      }
-    });
+
+  store.token = token;
+
+  await hydrateBucket();
+
+  if (store.bucket.length) {
+    store.token = token;
+    store.isLogged = true;
+  }
 });
 </script>
