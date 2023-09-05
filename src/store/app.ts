@@ -7,13 +7,21 @@ export const useAppStore = defineStore("app", () => {
   const token: Ref<string | null> = ref(null);
   const isLogged: Ref<boolean> = ref(false);
   const loginError: Ref<boolean> = ref(false);
+  const userName: Ref<string> = ref("");
 
   const bucket: any = ref([]);
 
-  async function logout() {
-    isLogged.value = false;
-    token.value = null;
+  function logout() {
+    $reset();
     localStorage.clear();
+  }
+
+  function $reset() {
+    token.value = null;
+    isLogged.value = false;
+    loginError.value = false;
+    userName.value = "";
+    bucket.value = [];
   }
 
   async function addTodo(payload: TodoItem) {
@@ -75,5 +83,6 @@ export const useAppStore = defineStore("app", () => {
     logout,
     token,
     updateTodo,
+    userName,
   };
 });

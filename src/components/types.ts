@@ -6,4 +6,5 @@ export type TodoItem = {
   created_at?: string;
   updated_at?: string;
   user_id?: number;
+  done?: boolean;
 };

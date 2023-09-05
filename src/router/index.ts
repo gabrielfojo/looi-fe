@@ -17,6 +17,18 @@ const routes = [
       },
     ],
   },
+  {
+    path: "/",
+    component: () => import("@/layouts/default/Default.vue"),
+    children: [
+      {
+        path: "signup",
+        name: "Signup",
+        component: () =>
+          import(/* webpackChunkName: "home" */ "@/views/Signup.vue"),
+      },
+    ],
+  },
 ];
 
 const router = createRouter({

@@ -19,6 +19,11 @@
         :disabled="!isValid"
         >Login</v-btn
       >
+      <p class="text-center mt-2">
+        <router-link to="/signup" class="text-blue-darken-1"
+          >SignUp</router-link
+        >
+      </p>
     </v-form>
     <v-alert
       v-if="store.loginError"
@@ -51,8 +56,8 @@ const login = async () => {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      email: import.meta.env.VITE_API_USER,
-      password: import.meta.env.VITE_API_PASS,
+      email: username.value,
+      password: password.value,
     }),
   })
     .then((res) => res.json())
@@ -61,8 +66,10 @@ const login = async () => {
         store.token = res.token;
         store.isLogged = true;
         store.loginError = false;
+        store.userName = "John Doe";
         localStorage.setItem("token", res.token);
         hydrateBucket();
+        getUser();
       } else {
         store.loginError = true;
       }
@@ -84,8 +91,28 @@ const hydrateBucket = async () => {
       if (res.length) {
         store.bucket.push(...res);
       }
-    });
+    })
+    .catch((err) => console.log(err));
 };
+
+const getUser = async () => {
+  await fetch(`${import.meta.env.VITE_API_URL}/user`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${store.token}`,
+    },
+  })
+    .then((res) => {
+      return res.json();
+    })
+    .then((res) => {
+      store.userName = res.name;
+      localStorage.setItem("userName", res.name);
+    })
+    .catch((err) => console.log(err));
+};
+
 /*
  *  If there is a token in Localstorage we try to retrieve the data and skip the login
  */
@@ -103,6 +130,7 @@ onBeforeMount(async () => {
   if (store.bucket.length) {
     store.token = token;
     store.isLogged = true;
+    store.userName = localStorage.getItem("userName") ?? "John Doe";
   }
 });
 </script>

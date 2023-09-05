@@ -5,9 +5,7 @@
         <template v-slot:prepend>
           <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
         </template>
-
         <v-app-bar-title>Looi App</v-app-bar-title>
-
         <template v-slot:append>
           <v-btn> Add Todo <Dialog @save="addTodo" /></v-btn>
         </template>
@@ -26,7 +24,9 @@
             v-for="card in store.bucket"
             :key="card.id"
           >
-            <v-card-text>
+            <v-card-text
+              :class="card.done ? 'text-decoration-line-through' : ''"
+            >
               {{ card.body }}
             </v-card-text>
 
@@ -36,6 +36,7 @@
                 size="small"
                 variant="flat"
                 prepend-icon="mdi-pencil-circle"
+                :disabled="!!card.done"
                 >Edit <Dialog :card="{ ...card }" @save="updateTodo"
               /></v-btn>
               <v-btn
@@ -45,6 +46,14 @@
                 prepend-icon="mdi-delete-circle"
                 @click="deleteTodo(card.id)"
                 >Delete</v-btn
+              >
+              <v-btn
+                color="secondary"
+                variant="flat"
+                size="small"
+                prepend-icon="mdi-delete-circle"
+                @click="archiveTodo(card)"
+                >{{ card.done ? "Undo" : "Done" }}</v-btn
               >
             </template>
           </v-card>
@@ -75,6 +84,11 @@ const deleteTodo = (id: number) => {
 };
 
 const updateTodo = (payload: TodoItem) => {
+  store.updateTodo(payload);
+};
+
+const archiveTodo = (payload: TodoItem) => {
+  payload.done = !payload.done;
   store.updateTodo(payload);
 };
 </script>

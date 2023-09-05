@@ -4,7 +4,7 @@
       <v-list-item
         lines="two"
         prepend-avatar="https://randomuser.me/api/portraits/women/81.jpg"
-        title="Jane Smith"
+        :title="store.userName"
         subtitle="Logged in"
       ></v-list-item>
     </template>
@@ -16,7 +16,7 @@
         prepend-icon="mdi-logout"
         title="Logout"
         value="account"
-        @click="store.logout()"
+        @click="logout"
       ></v-list-item>
     </v-list>
   </v-navigation-drawer>
@@ -26,4 +26,8 @@ import { useAppStore } from "@/store/app";
 
 const props = defineProps(["drawer"]);
 const store = useAppStore();
+
+const logout = function () {
+  store.logout();
+};
 </script>
