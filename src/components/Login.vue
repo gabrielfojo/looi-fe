@@ -5,17 +5,21 @@
         v-model="username"
         :rules="[(v) => !!v || 'Username is required']"
         label="Username"
+        name="username"
       ></v-text-field>
       <v-text-field
         v-model="password"
+        type="password"
         :rules="[(v) => !!v || 'Password is required']"
         label="Password"
+        name="password"
       ></v-text-field>
       <v-btn
         type="submit"
         block
         class="mt-2"
         @click="login"
+        data-test="login"
         :disabled="!isValid"
         >Login</v-btn
       >
@@ -26,7 +30,7 @@
       </p>
     </v-form>
     <v-alert
-      v-if="store.loginError"
+      v-if="error"
       class="mt-4"
       type="error"
       title="Error"
@@ -39,12 +43,14 @@
 import { ref, computed, onBeforeMount } from "vue";
 import { useAppStore } from "@/store/app";
 import { TodoItem } from "./types";
+import { LOGIN_DEFAULT_NAME } from "@/components/constants";
 
 const emit = defineEmits(["isLogged"]);
 
 const store = useAppStore();
 const username = ref("");
 const password = ref("");
+const error = ref(false);
 const form = ref(null);
 
 const isValid = computed(() => {
@@ -65,14 +71,14 @@ const login = async () => {
       if (res.token && !store.isLogged) {
         store.token = res.token;
         store.isLogged = true;
-        store.loginError = false;
-        store.userName = "John Doe";
+        store.userName = LOGIN_DEFAULT_NAME;
         localStorage.setItem("token", res.token);
         hydrateBucket();
         getUser();
-      } else {
-        store.loginError = true;
       }
+    })
+    .catch(() => {
+      error.value = true;
     });
 };
 
@@ -92,7 +98,9 @@ const hydrateBucket = async () => {
         store.bucket.push(...res);
       }
     })
-    .catch((err) => console.log(err));
+    .catch(() => {
+      error.value = true;
+    });
 };
 
 const getUser = async () => {
@@ -109,8 +117,7 @@ const getUser = async () => {
     .then((res) => {
       store.userName = res.name;
       localStorage.setItem("userName", res.name);
-    })
-    .catch((err) => console.log(err));
+    });
 };
 
 /*
@@ -130,7 +137,7 @@ onBeforeMount(async () => {
   if (store.bucket.length) {
     store.token = token;
     store.isLogged = true;
-    store.userName = localStorage.getItem("userName") ?? "John Doe";
+    store.userName = localStorage.getItem("userName") ?? LOGIN_DEFAULT_NAME;
   }
 });
 </script>

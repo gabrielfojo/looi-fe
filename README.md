@@ -1,6 +1,4 @@
-# essentials
-
-## Project setup
+# Looi Challenge FE Project setup
 
 ```
 # yarn
@@ -13,45 +11,12 @@ npm install
 pnpm install
 ```
 
-### Compiles and hot-reloads for development
+- Rename .env.example to .env update VITE_API_URL to real Address
 
-```
-# yarn
-yarn dev
+## Run project
 
-# npm
-npm run dev
+`npm run dev`
 
-# pnpm
-pnpm dev
-```
+## Tests
 
-### Compiles and minifies for production
-
-```
-# yarn
-yarn build
-
-# npm
-npm run build
-
-# pnpm
-pnpm build
-```
-
-### Lints and fixes files
-
-```
-# yarn
-yarn lint
-
-# npm
-npm run lint
-
-# pnpm
-pnpm lint
-```
-
-### Customize configuration
-
-See [Configuration Reference](https://vitejs.dev/config/).
+`npm run test:unit`

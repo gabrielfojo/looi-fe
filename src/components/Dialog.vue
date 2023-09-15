@@ -4,7 +4,12 @@
       <v-card-text>
         <v-sheet width="300" class="mx-auto">
           <v-form>
-            <v-text-field v-model="title" label="Title" required></v-text-field>
+            <v-text-field
+              v-model="title"
+              label="Title"
+              name="title"
+              required
+            ></v-text-field>
             <v-textarea label="Body" v-model="body" required></v-textarea>
             <v-color-picker v-model="color" hide-inputs></v-color-picker>
             <v-btn color="secondary" class="mt-4" block @click="save">

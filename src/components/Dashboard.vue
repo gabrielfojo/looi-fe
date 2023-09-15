@@ -75,20 +75,20 @@ const store = useAppStore();
 
 // Methods
 
-const addTodo = (payload: TodoItem) => {
-  store.addTodo(payload);
+const addTodo = async (payload: TodoItem) => {
+  const res = await store.addTodo(payload);
 };
 
-const deleteTodo = (id: number) => {
-  store.deleteTodo(id);
+const deleteTodo = async (id: number) => {
+  const res = await store.deleteTodo(id);
 };
 
-const updateTodo = (payload: TodoItem) => {
-  store.updateTodo(payload);
+const updateTodo = async (payload: TodoItem) => {
+  const res = await store.updateTodo(payload);
 };
 
-const archiveTodo = (payload: TodoItem) => {
+const archiveTodo = async (payload: TodoItem) => {
   payload.done = !payload.done;
-  store.updateTodo(payload);
+  const res = await store.updateTodo(payload);
 };
 </script>
